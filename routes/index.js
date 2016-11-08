@@ -13,6 +13,7 @@ exports.view = function(req, res){
 		.exec(renderProjects);
 
 	function renderProjects(err, projects) {
+		//console.log(projects);
 		res.render('index', { 'projects': projects });
 	}
 

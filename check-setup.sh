@@ -16,17 +16,17 @@ cur_lab="_DB"
 system=$(uname -a | cut -d' ' -f1,2)
 if [ "$system" == "Linux precise32" ] || [ "$system" == "Linux vagrant-ubuntu-trusty-64" ]
 then
-  sys_vagrant="1"  
+  sys_vagrant="1"
   echo "Running on Vagrant guest"
-  
+
   user=$(whoami)
-  
+
   if [ "$user" != "root" ]
   then
   echo "ERROR: You must run this script with sudo"
   exit
   fi
-  
+
 elif [ $short_system == "Darwin"  ]
 then
   sys_osx="1"
@@ -39,18 +39,18 @@ fi
 if [ "$sys_vagrant" == "1" ]
 then
 # on vagrant guest
-  
+
   mongo_fix=$(grep "run_mongo" ~/.bash_profile | wc -l | xargs)
 
   if [ $mongo_fix != "1" ]
   then
 
-    echo "Adding automatic mongo start"  
+    echo "Adding automatic mongo start"
     echo -e ". /home/vagrant/introHCI/lab_DB/run_mongo.sh" >> ~/.bash_profile
     . /home/vagrant/introHCI/lab_DB/run_mongo.sh
-  
+
   fi
-  
+
   required_pkg=( "mongo" "heroku" "node" "npm")
 
   all_present="1"
@@ -77,7 +77,7 @@ then
     fi
     fi
   done
-  
+
   if [ "$mongo_missing" == "1" ]
   then
   echo "Installing MongoDB..."
@@ -88,7 +88,7 @@ then
   echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list;
   apt-get update;
   apt-get install -y mongodb-10gen;)
-  
+
   mongo_loc=$(which mongo)
   if [ "${#mongo_loc}" == "0" ]
   then
@@ -101,7 +101,7 @@ then
     sudo mkdir -p /data/db
     sudo chown -R vagrant:vagrant /data/db
   fi
-  
+
   if [ "$heroku_missing" == "1" ]
   then
     heroku_res=$(echo "Installing Heroku Toolbelt...";
@@ -114,10 +114,10 @@ then
       echo "Auto install succeeded"
     fi
   fi
-  
+
   if [ "$node_missing" == "1" ]
   then
-    echo "Installing nodejs"    
+    echo "Installing nodejs"
     node_res=$(/home/vagrant/introHCI/nodejs.sh)
     node_loc=$(which node)
     if [ "${#node_loc}" == "0" ]
@@ -127,10 +127,10 @@ then
       echo "Auto install succeeded"
     fi
   fi
-  
+
   if [ "$npm_missing" == "1" ]
   then
-    echo "Installing npm"  
+    echo "Installing npm"
     npm_res=$(/home/vagrant/introHCI/nodejs.sh)
     npm_loc=$(which npm)
     if [ "${#npm_loc}" == "0" ]
@@ -151,7 +151,7 @@ then
     install_status=$(cd lab$cur_lab; npm -y install --no-bin-links)
 
     node_status=$(cd lab_DB;npm ls 2>&1)
-  
+
     if [[ $node_status != *"UNMET DEPENDENCY"* ]]
     then
       echo "PASS: Repair successful. All node packages installed."
@@ -166,8 +166,8 @@ then
   then
     echo "Patching ssh timeout configuration."
 
-    echo -e "\n# Setup SSH timeouts\nClientAliveInterval 30\nClientAliveCountMax 4" >> /etc/ssh/sshd_config 
-    echo -e "\n# Setup SSH timeouts\nServerAliveInterval 30\nServerAliveCountMax 4" >> /etc/ssh/ssh_config 
+    echo -e "\n# Setup SSH timeouts\nClientAliveInterval 30\nClientAliveCountMax 4" >> /etc/ssh/sshd_config
+    echo -e "\n# Setup SSH timeouts\nServerAliveInterval 30\nServerAliveCountMax 4" >> /etc/ssh/ssh_config
     /etc/init.d/ssh restart > /dev/null
 
   fi
@@ -206,7 +206,7 @@ else
     fi
   fi
 
-  
+
   vagrant_check=$(grep MSB Vagrantfile | wc -l | xargs)
 
   if [ $vagrant_check == "4" ]
